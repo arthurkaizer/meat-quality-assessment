@@ -21,7 +21,7 @@ height = 100
 
 files = ['Fresh', 'Spoiled']
 
-adress = 'C:\\Users\\Arthur\\Documents\\Faculdade\\2022\\semestre2\\TI6\\Teste\\input\\class'
+adress = 'C:\\Users\\Arthur\\Documents\\Faculdade\\2022\\semestre2\\TI6\\MEAT-QUALITY-ASSESSMENT\\input\\class'
 
 data = {}
 for f in files:
@@ -123,3 +123,58 @@ for i in range(len(model.metrics_names)):
     print(model.metrics_names[i],":",result[i])
 
 model.summary()
+
+
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+
+y_pred = model.predict(test_images)
+
+def toClass(pred):
+    
+    class_ = np.zeros(len(pred))
+    for i in range(len(pred)):
+        index = pred[i].argmax()
+        class_[i] = index
+        
+    return class_
+
+cm = confusion_matrix(test_labels,toClass(y_pred))
+
+df1 = pd.DataFrame(columns=["Fresh","Spoiled"], index= ["Fresh","Spoiled"], data= cm )
+
+f,ax = plt.subplots(figsize=(6,6))
+
+sns.heatmap(df1, annot=True,cmap="Greens", fmt= '.0f',ax=ax,linewidths = 5, cbar = False,annot_kws={"size": 16})
+plt.xlabel("Predicted Label")
+plt.xticks(size = 12)
+plt.yticks(size = 12, rotation = 0)
+plt.ylabel("True Label")
+plt.title("YSA Confusion Matrix", size = 12)
+plt.show()
+
+def Prediction(image):
+    
+    global width, height, files, labels
+    
+    img = cv2.resize(image,(width,height))
+    
+    test = img / 255.0
+    
+    pred = model.predict(np.array([image])).argmax()
+    
+    return labels.inverse_transform([pred])[0]
+
+plt.figure(figsize=(15,15))
+for i in range(1,17):
+    fig = np.random.choice(np.arange(size))
+    plt.subplot(4,4,i)
+    plt.imshow(image_data[fig])
+    if image_target[fig]=='Fresh':
+        c='green'
+    else:
+        c='red'
+    plt.title(image_target[fig], color=c)
+    plt.ylabel("| Pred:{} |".format(Prediction(image_data[fig])),fontsize=17, color=c)
+    plt.xticks([]), plt.yticks([])
+plt.show()
