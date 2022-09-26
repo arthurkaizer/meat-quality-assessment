@@ -10,7 +10,6 @@
 - No linux: `source venv/bin/activate`
 
 Se o ambiente for ativado corretamente, talvez você terá um indicativo visual, por exemplo:
-
   `(venv) C:\Users... `
 
 ### Instalar dependências do projeto:
