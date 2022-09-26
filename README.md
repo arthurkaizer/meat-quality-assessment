@@ -1,5 +1,9 @@
 # Passo a passo para rodar o projeto
 
+### Imagens
+
+Necessário descompactar a pasta de imagens para a pasta **assets** na raiz do projeto. É necessário também separar os arquivos por classes, com imagens de carnes boas em uma pasta e as imagens de carnes ruins em outra pasta, ambas dentro da pasta **assets**. Os nomes das pastas podem ser alterados no arquivo **configs.py**
+
 ### Criar o ambiente virtual:
 
 `python -m venv venv`
