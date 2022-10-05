@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from typing import Any, List
 from sklearn.metrics import confusion_matrix as create_confusion_matrix
 
-from model import Model
+from aliases import Model
 
 
 class ConfusionMatrix:

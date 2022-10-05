@@ -9,3 +9,4 @@ image_height = 100
 assets_folder_path = os.path.join(_working_dir, "assets")
 fresh_images_folder_path = os.path.join(assets_folder_path, "Fresh")
 spoiled_images_folder_path = os.path.join(assets_folder_path, "Spoiled")
+saved_model_file_path = os.path.join(_working_dir, "saved_model", "saved_model.h5")

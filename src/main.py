@@ -1,47 +1,43 @@
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
+from fastapi import FastAPI
 
-from model import Model
-from images import Images
-from confusion_matrix import ConfusionMatrix
-from testing import ModelTesting
+from models import Models
+from files import Files
 
+model = Models.load()
 
-def main():
-    images = Images()
-    image_classes = images.classes
-    image_data = np.array(images.images)
+if model == None:
+    files, classes = Files.get_files_and_corresponding_classes()
 
     labels = LabelEncoder()
-    labels.fit(image_classes)
+    labels.fit(classes)
 
-    x = image_data / 255.0
-    y = labels.transform(image_classes)
+    image_data = np.array(files) / 255.0
+    image_classes = labels.transform(classes)
 
-    (train_images,
-     test_images,
-     train_labels,
-     test_labels) = train_test_split(x, y, test_size=0.3, random_state=123)
+    result = train_test_split(
+         image_data, 
+         image_classes, 
+         test_size=0.3, 
+         random_state=123)
 
-    model = Model()
-    model.compile_with_default_params()
-    model.train(train_images, train_labels, test_images, test_labels)
-    model.evaluate_and_show_metrics(test_images, test_labels)
-    model.summary()
+    train_images = result[0]
+    test_images = result[1]
+    train_labels = result[2]
+    test_labels = result[3]
 
-    confusion_matrix = ConfusionMatrix(model, test_images, test_labels)
-    confusion_matrix.show()
+    model = Models.create()
+    Models.compile_model_with_default_params(model)
+    Models.train_model(model, train_images, train_labels, test_images, test_labels)
+    Models.evaluate_model_and_show_metrics(model, test_images, test_labels)
+    Models.save(model)
 
-    model_testing = ModelTesting(
-        model=model,
-        label_encoder=labels,
-        image_data=image_data,
-        image_classes=image_classes,
-        number_of_items_to_test=30
-    )
-    model_testing.test_and_show_result()
+model.summary()
 
+api = FastAPI()
 
-if __name__ == "__main__":
-    main()
+@api.get("/")
+def root():
+    return model.summary()

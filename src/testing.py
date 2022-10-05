@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from typing import List
 
-from model import Model
+from aliases import Model
 from image_classes import ImageClasses
 
 
