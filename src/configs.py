@@ -1,4 +1,5 @@
 import os
+import tensorflow as tf
 
 _working_dir = os.getcwd()
 
@@ -9,3 +10,6 @@ image_height = 100
 assets_folder_path = os.path.join(_working_dir, "assets")
 fresh_images_folder_path = os.path.join(assets_folder_path, "Fresh")
 spoiled_images_folder_path = os.path.join(assets_folder_path, "Spoiled")
+tf.config.threading.set_inter_op_parallelism_threads(2) 
+tf.config.threading.set_intra_op_parallelism_threads(2)
+tf.config.set_soft_device_placement(True)
