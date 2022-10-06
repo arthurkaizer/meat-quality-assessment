@@ -23,3 +23,5 @@ Se o ambiente for ativado corretamente, talvez você terá um indicativo visual,
 ### Rodar o projeto:
 
 `uvicorn --app-dir src main:api`
+
+Com a api rodando após o comando acima, basta acessar *http://localhost:8000/docs* e utilizar o swagger para utilizar a api
