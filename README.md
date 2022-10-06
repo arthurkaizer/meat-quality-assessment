@@ -22,5 +22,4 @@ Se o ambiente for ativado corretamente, talvez você terá um indicativo visual,
 
 ### Rodar o projeto:
 
-- No windows: `python src\main.py`
-- No linux: `python src/main.py`
+`uvicorn --app-dir src main:api`
