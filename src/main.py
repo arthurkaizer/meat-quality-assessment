@@ -7,6 +7,8 @@ from images import Images
 from confusion_matrix import ConfusionMatrix
 from testing import ModelTesting
 
+import time
+
 
 def main():
     images = Images()
@@ -26,7 +28,9 @@ def main():
 
     model = Model()
     model.compile_with_default_params()
+    timeStart = time.time()
     model.train(train_images, train_labels, test_images, test_labels)
+    timeEnd = time.time() - timeStart
     model.evaluate_and_show_metrics(test_images, test_labels)
     model.summary()
 
@@ -42,6 +46,7 @@ def main():
     )
     model_testing.test_and_show_result()
 
+    print ("\nResolved in " + str(timeEnd) + " seconds!\n")
 
 if __name__ == "__main__":
     main()
