@@ -3,15 +3,21 @@ import math
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+from tensorflow.keras.models import Sequential
 from sklearn.preprocessing import LabelEncoder
 from typing import List
 
-from model import Model
 from image_classes import ImageClasses
 
 
 class ModelTesting:
-    def __init__(self, model: Model, image_data: np.ndarray[cv2.Mat], image_classes: List[ImageClasses], label_encoder: LabelEncoder, number_of_items_to_test: int):
+    def __init__(
+        self,
+        model: Sequential,
+        image_data: np.ndarray[cv2.Mat],
+        image_classes: List[ImageClasses],
+        label_encoder: LabelEncoder, number_of_items_to_test: int
+    ):
         self._model = model
         self._image_data = image_data
         self._image_classes = image_classes

@@ -3,13 +3,12 @@ import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 from typing import Any, List
+from tensorflow.keras.models import Sequential
 from sklearn.metrics import confusion_matrix as create_confusion_matrix
-
-from model import Model
 
 
 class ConfusionMatrix:
-    def __init__(self, model: Model, test_data: List[Any], test_labels: List[Any]):
+    def __init__(self, model: Sequential, test_data: List[Any], test_labels: List[Any]):
         self._model = model
         self._test_data = test_data
         self._test_labels = test_labels
