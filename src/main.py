@@ -1,13 +1,27 @@
+import os
 import cv2
 import numpy as np
+from uvicorn import run
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from fastapi import FastAPI, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 
 import configs
 import models
 from files import Files
+
+
+api = FastAPI()
+
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_headers=["*"],
+    allow_methods=["*"],
+    allow_credentials=True
+)
 
 
 model = models.load_model_from_file()
@@ -37,18 +51,14 @@ if model is None:
     models.evaluate_model_and_show_metrics(model, test_images, test_labels)
     models.save_model_to_file(model)
 
-model.summary()
 
-api = FastAPI()
-
-
-async def _get_resized_image_from_file_content(file: UploadFile):
+async def _get_resized_image_from_file(file: UploadFile) -> np.ndarray:
     try:
         file_content = await file.read()
-        file_content_as_np_array = np.fromstring(file_content, np.uint8)
-        image = cv2.imdecode(file_content_as_np_array, cv2.COLOR_BGR2RGB)
-        resize_to = (configs.image_width, configs.image_height)
-        resized_image = cv2.resize(image, resize_to)
+        content_as_np_array = np.frombuffer(file_content, np.uint8)
+        image = cv2.imdecode(content_as_np_array, cv2.COLOR_BGR2RGB)
+        target_size = (configs.image_width, configs.image_height)
+        resized_image = cv2.resize(image, target_size)
         return np.array([resized_image])
     except Exception:
         return np.array([])
@@ -58,8 +68,8 @@ async def _get_resized_image_from_file_content(file: UploadFile):
 
 def _predict_class_for_image(image: np.ndarray) -> str:
     prediction_result = model.predict(image)
-    prediction_result_argmax = prediction_result.argmax()
-    return labels.inverse_transform([prediction_result_argmax])[0]
+    argmax = prediction_result.argmax()
+    return labels.inverse_transform([argmax])[0]
 
 
 @api.post("/classify")
@@ -72,7 +82,7 @@ async def classify_image(file: UploadFile):
         error_msg = f"File type not allowed. Allowed file extensions: {joined}"
         return {"error": error_msg}
 
-    resized_image = await _get_resized_image_from_file_content(file)
+    resized_image = await _get_resized_image_from_file(file)
 
     if resized_image.size == 0:
         return {"error": "Failed to read file content"}
@@ -80,3 +90,8 @@ async def classify_image(file: UploadFile):
     predicted_class = _predict_class_for_image(resized_image)
 
     return {"class": predicted_class}
+
+
+if __name__ == "__main__":
+    api_port = int(os.environ.get("PORT", 5000))
+    run(api, host="0.0.0.0", port=api_port)
